@@ -1,3 +1,4 @@
+#!/usr/bin/env node 
 let fs = require("fs");  // use to read file system in our operating system 
 const { inspect } = require("util");
 const { isUint8ClampedArray } = require("util/types");
@@ -16,6 +17,20 @@ for(let i = 0;i<inputArr.length;i++){ // in this loop we will categorize all the
         filesArr.push(inputArr[i]);
     }
 }
+// optionsCheck 
+let isBothOptionsPresent = optionArr.includes("-n")&&optionArr.includes("-b");      
+if(isBothOptionsPresent){
+    console.log("Using both -n and -b together is not allowed ");
+    return;
+}
+// existence
+for(let i = 0;i<filesArr.length;i++){
+    let isFilePresent = fs.existsSync(filesArr[i]);
+    if(isFilePresent==false){
+        console.log(`file ${filesArr[i]} is not present in current directory`);
+        return;
+    }
+}
 
 
 let content = "";
@@ -28,23 +43,22 @@ for(let i=0;i<filesArr.length;i++){
 let contentArr = content.split("\r\n");      
 //console.log(contentArr);    
 
-let isSPresent=optionArr.includes("-s");
-if(isSPresent){
-    for(let i=1;i<contentArr.length;i++){
-        if(contentArr[i]=="" && contentArr[i-1]==""){
-            contentArr[i]=null;
-        }
-        else if (contentArr[i-1]==null && contentArr[i]==""){
-            contentArr[i]=null;
+let isSPreset = optionArr.includes("-s");
+if (isSPreset == true) {
+    for (let i = 1; i < contentArr.length; i++) {
+        if (contentArr[i] == "" && contentArr[i - 1] == "") {
+            contentArr[i] = null;
+        } else if (contentArr[i] == "" && contentArr[i - 1] == null) {
+            contentArr[i] = null;
         }
     }
-    let temp = [];
-    for(let i = 0;i<contentArr.length;i++){
-        if(contentArr[i]!=null){
-            temp.push(contentArr[i]);
+    let tempArr = [];
+    for (let i = 0; i < contentArr.length; i++) {
+        if (contentArr[i] != null) {
+            tempArr.push(contentArr[i])
         }
-    } 
-    contentArr=temp;
+    }
+    contentArr = tempArr;
 }
 
 //console.log(contentArr.join("\n"));
@@ -69,7 +83,7 @@ if(isBPresent){
         }
     }
 
-    
+
 }
 
 console.log(contentArr.join("\n"));
